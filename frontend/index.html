@@ -1,19 +1,23 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>DigiComm AI Teaching Assistant</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/style.css">
+
 </head>
+
 
 <body>
 
     <div class="container">
+
 
         <header>
 
@@ -21,11 +25,14 @@
 
             <p>
                 Digital Communication Systems
+                <br>
                 AI Teaching Assistant
             </p>
 
         </header>
 
+
+        <!-- Example Questions -->
 
         <div class="examples">
 
@@ -47,6 +54,8 @@
 
         </div>
 
+
+        <!-- Chat -->
 
         <div class="chat-box" id="chatBox">
 
@@ -71,6 +80,8 @@
         </div>
 
 
+        <!-- Input -->
+
         <div class="input-area">
 
             <textarea
@@ -78,25 +89,33 @@
                 placeholder="Ask a Digital Communication question..."
             ></textarea>
 
+
             <button
                 class="ask-button"
                 onclick="askQuestion()">
+
                 Ask
+
             </button>
 
         </div>
 
 
+        <!-- Clear Chat -->
+
         <button
             class="clear-button"
             onclick="clearChat()">
+
             Clear Chat
+
         </button>
+
 
     </div>
 
 
-    <script src="script.js"></script>
+    <script src="/static/script.js"></script>
 
 </body>
 
