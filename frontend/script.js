@@ -47,13 +47,7 @@ async function askQuestion() {
 
     try {
 
-        /*
-         * IMPORTANT:
-         * Use /ask instead of 127.0.0.1.
-         *
-         * This allows the same code to work locally
-         * and on Render.
-         */
+        // Use the same Render server for the API request
 
         const response = await fetch(
             "/ask",
@@ -165,8 +159,6 @@ function clearChat() {
 
 /*
  * Format AI answer
- *
- * Converts simple Markdown into readable HTML.
  */
 
 function formatAnswer(text) {
@@ -185,7 +177,7 @@ function formatAnswer(text) {
 
 
 /*
- * Prevent AI/user text from inserting unwanted HTML.
+ * Prevent unwanted HTML
  */
 
 function escapeHTML(text) {
