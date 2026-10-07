@@ -1,0 +1,103 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DigiComm AI Teaching Assistant</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+
+            <h1>📡 DigiComm AI</h1>
+
+            <p>
+                Digital Communication Systems
+                AI Teaching Assistant
+            </p>
+
+        </header>
+
+
+        <div class="examples">
+
+            <button onclick="setQuestion('Explain BPSK in simple terms.')">
+                BPSK
+            </button>
+
+            <button onclick="setQuestion('What is the sampling theorem?')">
+                Sampling
+            </button>
+
+            <button onclick="setQuestion('Explain QPSK with an example.')">
+                QPSK
+            </button>
+
+            <button onclick="setQuestion('What is AWGN?')">
+                AWGN
+            </button>
+
+        </div>
+
+
+        <div class="chat-box" id="chatBox">
+
+            <div class="message ai">
+
+                <strong>DigiComm AI:</strong>
+
+                <br><br>
+
+                Hello! I'm your Digital Communication Systems
+                teaching assistant.
+
+                <br><br>
+
+                Ask me a question about Digital Communication
+                Systems. I'll explain the basic idea first,
+                give an example, and finish with a short quiz
+                and flashcards.
+
+            </div>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <textarea
+                id="question"
+                placeholder="Ask a Digital Communication question..."
+            ></textarea>
+
+            <button
+                class="ask-button"
+                onclick="askQuestion()">
+                Ask
+            </button>
+
+        </div>
+
+
+        <button
+            class="clear-button"
+            onclick="clearChat()">
+            Clear Chat
+        </button>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
