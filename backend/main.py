@@ -1,0 +1,208 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+import requests
+import os
+
+
+# -----------------------------
+# Load environment variables
+# -----------------------------
+
+load_dotenv()
+
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+
+# -----------------------------
+# Load subject context
+# -----------------------------
+
+def load_context():
+
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "context",
+        "context.md"
+    )
+
+    with open(context_path, "r", encoding="utf-8") as file:
+        return file.read()
+
+
+CONTEXT = load_context()
+
+
+# -----------------------------
+# Create FastAPI application
+# -----------------------------
+
+app = FastAPI(
+    title="CSPML Lab 5 - Digital Communication AI TA"
+)
+
+
+# -----------------------------
+# Allow frontend connection
+# -----------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
+# -----------------------------
+# Hugging Face API
+# -----------------------------
+
+HF_URL = "https://router.huggingface.co/v1/chat/completions"
+
+
+# -----------------------------
+# Student question format
+# -----------------------------
+
+class Question(BaseModel):
+
+    question: str
+
+
+# -----------------------------
+# Home/test endpoint
+# -----------------------------
+
+@app.get("/")
+def home():
+
+    return {
+        "message": "CSPML Lab 5 Digital Communication AI TA is running"
+    }
+
+
+# -----------------------------
+# Ask endpoint
+# -----------------------------
+
+@app.post("/ask")
+def ask_question(data: Question):
+
+    if not HF_TOKEN:
+
+        return {
+            "error": "Hugging Face API key not found."
+        }
+
+
+    headers = {
+
+        "Authorization": f"Bearer {HF_TOKEN}",
+
+        "Content-Type": "application/json"
+    }
+
+
+    system_prompt = f"""
+You are an AI teaching assistant for Digital Communication Systems.
+
+Use the subject context provided below.
+
+================ SUBJECT CONTEXT ================
+
+{CONTEXT}
+
+================ END CONTEXT ====================
+
+
+Your teaching rules:
+
+1. Start with a simple "Basic Idea".
+2. Assume the student may be a beginner.
+3. Explain technical words.
+4. Use simple language.
+5. Use examples whenever useful.
+6. Do not introduce complicated formulas unnecessarily.
+7. When using formulas, explain every symbol.
+8. For numerical problems, show the solution step by step.
+9. Make mathematical notation easy to read.
+10. Do not use unnecessarily advanced notation.
+11. End conceptual answers with:
+   - Important Points
+   - Quick Quiz with 2–3 questions
+   - 3–5 easy Flashcards
+12. Do not give quiz answers unless the student asks.
+13. Stay focused on Digital Communication Systems.
+
+
+Make the response easy for a student to understand and revise.
+"""
+
+
+    payload = {
+
+        "model": "openai/gpt-oss-120b",
+
+        "messages": [
+
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+
+            {
+                "role": "user",
+                "content": data.question
+            }
+
+        ],
+
+        "temperature": 0.2,
+
+        "max_tokens": 1500
+    }
+
+
+    try:
+
+        response = requests.post(
+            HF_URL,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
+
+
+        if response.status_code != 200:
+
+            return {
+
+                "error": response.text,
+
+                "status_code": response.status_code
+            }
+
+
+        result = response.json()
+
+        answer = result["choices"][0]["message"]["content"]
+
+
+        return {
+
+            "question": data.question,
+
+            "answer": answer
+        }
+
+
+    except Exception as error:
+
+        return {
+
+            "error": str(error)
+        }
