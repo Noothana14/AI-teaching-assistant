@@ -25,7 +25,7 @@ CONTEXT_DIR = os.path.join(BASE_DIR, "context")
 
 load_dotenv()
 
-HF_TOKEN = os.getenv("HF_TOKEN")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
 # --------------------------------
@@ -80,10 +80,10 @@ app.mount(
 
 
 # --------------------------------
-# Hugging Face API
+# Groq API
 # --------------------------------
 
-HF_URL = "https://router.huggingface.co/v1/chat/completions"
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
 # --------------------------------
@@ -126,16 +126,16 @@ def app_page():
 @app.post("/ask")
 def ask_question(data: Question):
 
-    if not HF_TOKEN:
+    if not GROQ_API_KEY:
 
         return {
-            "error": "Hugging Face API key not found."
+            "error": "Groq API key not found."
         }
 
 
     headers = {
 
-        "Authorization": f"Bearer {HF_TOKEN}",
+        "Authorization": f"Bearer {GROQ_API_KEY}",
 
         "Content-Type": "application/json"
     }
@@ -213,7 +213,7 @@ IMPORTANT FORMATTING RULES:
     try:
 
         response = requests.post(
-            HF_URL,
+            GROQ_URL,
             headers=headers,
             json=payload,
             timeout=60
