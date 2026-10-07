@@ -6,25 +6,36 @@ from dotenv import load_dotenv
 import requests
 import os
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-# -----------------------------
+
+# --------------------------------
+# Project paths
+# --------------------------------
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+CONTEXT_DIR = os.path.join(BASE_DIR, "context")
+
+
+# --------------------------------
 # Load environment variables
-# -----------------------------
+# --------------------------------
 
 load_dotenv()
 
 HF_TOKEN = os.getenv("HF_TOKEN")
 
 
-# -----------------------------
+# --------------------------------
 # Load subject context
-# -----------------------------
+# --------------------------------
 
 def load_context():
 
     context_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        "context",
+        CONTEXT_DIR,
         "context.md"
     )
 
@@ -35,18 +46,18 @@ def load_context():
 CONTEXT = load_context()
 
 
-# -----------------------------
+# --------------------------------
 # Create FastAPI application
-# -----------------------------
+# --------------------------------
 
 app = FastAPI(
     title="CSPML Lab 5 - Digital Communication AI TA"
 )
 
 
-# -----------------------------
+# --------------------------------
 # Allow frontend connection
-# -----------------------------
+# --------------------------------
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,37 +68,60 @@ app.add_middleware(
 )
 
 
-# -----------------------------
+# --------------------------------
+# Serve frontend files
+# --------------------------------
+
+app.mount(
+    "/static",
+    StaticFiles(directory=FRONTEND_DIR),
+    name="static"
+)
+
+
+# --------------------------------
 # Hugging Face API
-# -----------------------------
+# --------------------------------
 
 HF_URL = "https://router.huggingface.co/v1/chat/completions"
 
 
-# -----------------------------
+# --------------------------------
 # Student question format
-# -----------------------------
+# --------------------------------
 
 class Question(BaseModel):
 
     question: str
 
 
-# -----------------------------
-# Home/test endpoint
-# -----------------------------
+# --------------------------------
+# Home page
+# --------------------------------
 
 @app.get("/")
 def home():
 
-    return {
-        "message": "CSPML Lab 5 Digital Communication AI TA is running"
-    }
+    return FileResponse(
+        os.path.join(FRONTEND_DIR, "index.html")
+    )
 
 
-# -----------------------------
+# --------------------------------
+# Optional app route
+# --------------------------------
+
+@app.get("/app")
+def app_page():
+
+    return FileResponse(
+        os.path.join(FRONTEND_DIR, "index.html")
+    )
+
+
+# --------------------------------
 # Ask endpoint
-# -----------------------------
+# --------------------------------
 
 @app.post("/ask")
 def ask_question(data: Question):
@@ -132,14 +166,23 @@ Your teaching rules:
 9. Make mathematical notation easy to read.
 10. Do not use unnecessarily advanced notation.
 11. End conceptual answers with:
-   - Important Points
-   - Quick Quiz with 2–3 questions
-   - 3–5 easy Flashcards
+    - Important Points
+    - Quick Quiz with 2–3 questions
+    - 3–5 easy Flashcards
 12. Do not give quiz answers unless the student asks.
 13. Stay focused on Digital Communication Systems.
 
-
 Make the response easy for a student to understand and revise.
+
+IMPORTANT FORMATTING RULES:
+
+- Use simple plain text.
+- Do not use excessive symbols.
+- Do not use complicated Markdown.
+- Use short headings.
+- Avoid unnecessary ###, ##, **, or other Markdown symbols.
+- Keep equations simple and readable.
+- Use numbered lists where appropriate.
 """
 
 
